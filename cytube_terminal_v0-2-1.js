@@ -1,15 +1,15 @@
 
 /* ============================================================
-   CYTUBE TERMINAL — v0.2.0
+   CYTUBE TERMINAL — v0.2.1
    Phase 2: read-only client/DOM inspection; no socket emissions.
    Install in CyTube's custom JavaScript editor.
    ============================================================ */
 (() => {
   "use strict";
 
-  const VERSION = "0.2.0";
-  const ROOT_ID = "cyterm-v020-root";
-  const LAUNCH_ID = "cyterm-v020-launcher";
+  const VERSION = "0.2.1";
+  const ROOT_ID = "cyterm-v021-root";
+  const LAUNCH_ID = "cyterm-v021-launcher";
   if (document.getElementById(ROOT_ID)) return;
 
   const state = {
@@ -139,7 +139,7 @@
   `;
 
   const style = document.createElement("style");
-  style.id = "cyterm-v020-style";
+  style.id = "cyterm-v021-style";
   style.textContent = css;
   document.head.appendChild(style);
 
