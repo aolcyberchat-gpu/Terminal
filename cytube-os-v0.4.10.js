@@ -1,5 +1,5 @@
 /* ============================================================
-   CyTube OS - v0.4.9
+   CyTube OS - v0.4.10
    Retro grayscale desktop + keyboard-first window manager.
    Skins CyTube's own chat / video / playlist elements (nothing is
    rebuilt, so emotes, formatting and slash commands keep working).
