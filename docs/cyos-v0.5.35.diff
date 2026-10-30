@@ -1,0 +1,12 @@
+diff --git a/cytube-os-v0.5.21.js b/cytube-os-v0.5.35.js
+index 0000000..0000000 100644
+--- a/cytube-os-v0.5.21.js
++++ b/cytube-os-v0.5.35.js
+@@ -2422,7 +2422,7 @@
+     if (document.querySelector(".modal.in,.modal.show")) return;
+     const t = e.target;
+-    const typing = !!t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName || "") || t.isContentEditable);
++    const typing = !!t && (/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(t.tagName || "") || t.isContentEditable);
+     const inChat = !!t && t.id === "chatline";
+ 
+     if (e.key === "Escape") {
