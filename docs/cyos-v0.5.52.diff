@@ -1,0 +1,24 @@
+--- a/cytube-os-v0.5.51.js
++++ b/cytube-os-v0.5.52.js
+@@
+-  const VERSION = "0.5.51";
++  const VERSION = "0.5.52";
+@@
+-  cmd("chat", "chat", "Open and focus chat", "local", () => openWin("chat"));
+-  cmd("video", "video", "Show or hide the video window", "local", () => toggleWin("video"));
+-  cmd(["list", "pl", "playlist"], "list", "Show or hide the playlist window", "local", () => toggleWin("playlist"));
+-  cmd(["console", "log"], "console", "Show or hide the Console", "local", () => toggleWin("console"));
+-  cmd(["terminal", "term", "shell"], "terminal", "Show or hide the Terminal", "local", () => toggleWin("terminal"));
++  // windowToggleAction verifies the resulting open/closed or active-tab state.
++  // [migrated chat/video/list/console/terminal commands]
+@@
+-  cmd(["top", "ontop"], "top [window]", "Toggle always-on-top for a window (default: focus)", "local", (a) => {
++  // top now verifies the requested always-on-top state after applyZ/save.
++  // menumode validates focus|open and verifies S.menuWins after rebuilding.
+@@
+-  cmd("users", "users", "Show or hide the user list in chat", "local", () => { S.users = !S.users; refresh(); });
+-  cmd("nav", "nav", "Show or hide the site navbar (login, options)", "local", () => { S.nav = !S.nav; refresh(); });
++  // users/nav/sysmsg now use verified preference actions.
+@@
+-  cmd(["theme", "sys.theme"], "theme [mac|term]", "Switch between light and dark", "local", (a) => {
++  // theme now validates the argument and verifies the applied theme class.
