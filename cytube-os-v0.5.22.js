@@ -92,7 +92,7 @@
       }
       return v.trim();
     };
-    const recordId = (app, key) => app + "\\u0000" + key;
+    const recordId = (app, key) => JSON.stringify([app, key]);
 
     function openDB() {
       if (!window.indexedDB) return Promise.reject(new Error("IndexedDB is unavailable in this browser or context."));
@@ -2671,7 +2671,7 @@ body.cyos #chatwrap #messagebuffer .cyos-sys{font-style:italic;opacity:.8;border
     registerWindow({
       id: "notepad",
       title: "Notepad",
-      icon: "\\u270E",
+      icon: "✎",
       defaultOpen: false,
       mount: (body) => {
         body.style.cssText = "display:flex;flex-direction:column;gap:8px;padding:10px;box-sizing:border-box;height:100%;";
@@ -2693,20 +2693,31 @@ body.cyos #chatwrap #messagebuffer .cyos-sys{font-style:italic;opacity:.8;border
         actions.append(saveBtn, clearBtn);
         body.append(status, area, actions);
 
-        let timer = 0, loaded = false, saving = false;
+        let timer = 0, loaded = false, saving = false, revision = 0, savedRevision = 0;
         const saveNote = async () => {
-          if (!loaded || saving) return;
+          if (!loaded || saving || savedRevision === revision) return;
           saving = true;
           status.textContent = "Saving…";
           try {
-            await appStorage.set("notepad", "document", area.value);
+            while (savedRevision !== revision) {
+              const snapshot = area.value, targetRevision = revision;
+              await appStorage.set("notepad", "document", snapshot);
+              savedRevision = targetRevision;
+            }
             status.textContent = "Saved · " + new Date().toLocaleTimeString();
           } catch (err) {
             status.textContent = "Save failed: " + (err && err.message ? err.message : err);
-          } finally { saving = false; }
+          } finally {
+            saving = false;
+            if (savedRevision !== revision && loaded) {
+              if (timer) clearTimeout(timer);
+              timer = setTimeout(() => { timer = 0; saveNote(); }, 150);
+            }
+          }
         };
         const scheduleSave = () => {
           if (timer) clearTimeout(timer);
+          revision++;
           status.textContent = "Unsaved changes…";
           timer = setTimeout(() => { timer = 0; saveNote(); }, 600);
         };
@@ -2714,11 +2725,13 @@ body.cyos #chatwrap #messagebuffer .cyos-sys{font-style:italic;opacity:.8;border
         appStorage.get("notepad", "document").then((value) => {
           area.value = typeof value === "string" ? value : "";
           loaded = true;
+          savedRevision = revision;
           area.disabled = false;
           status.textContent = value === null ? "New note · stored locally in this browser" : "Loaded saved note";
         }).catch((err) => {
           loaded = true;
           area.disabled = false;
+          savedRevision = revision;
           status.textContent = "Storage unavailable: " + (err && err.message ? err.message : err);
         });
         area.addEventListener("input", scheduleSave);
