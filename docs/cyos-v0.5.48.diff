@@ -1,0 +1,31 @@
+--- a/cytube-os-v0.5.47.js
++++ b/cytube-os-v0.5.48.js
+@@
+-   v0.5.47: Report configured alpha separately from layout-effective Chat surfaces (Theater buffer/input override).
++   v0.5.47: Track layout-effective Chat alpha separately from configured alpha.
++   v0.5.48: Simplify alpha output to one user-facing window value; hide DOM surface details.
+@@
+-  const VERSION = "0.5.47";
++  const VERSION = "0.5.48";
+@@
+-  function alphaReport(id) {
+-    const st = alphaState(id), pct = (v) => Math.round(v * 100) + "%";
+-    if (id === "chat") {
+-      return "configured " + pct(st.configured) +
+-        " | frame/title " + pct(st.frame) +
+-        " | buffer/input " + pct(st.content) +
+-        (st.theaterOverride ? " (theater ×76%)" : "") +
+-        (S.users ? " | userlist " + pct(st.userlist) : "");
+-    }
+-    return "configured/effective " + pct(st.configured);
+-  }
++  // User-facing alpha is the visible window's primary background opacity.
++  // Keep configured/per-surface detail internal; do not expose DOM structure.
++  function alphaReport(id) {
++    const st = alphaState(id);
++    return Math.round(st.content * 100) + "%" +
++      (st.theaterOverride ? " (theater)" : "");
++  }
+@@
+-  const VERSION = "0.5.47";
++  const VERSION = "0.5.48";
