@@ -1,0 +1,29 @@
+--- a/cytube-os-v0.5.50.js
++++ b/cytube-os-v0.5.51.js
+@@
+-  const VERSION = "0.5.50";
++  const VERSION = "0.5.51";
+@@
+-  cmd("theater", "theater", "Full-screen video with chat on top", "local", () => setLayout("theater"));
+-  cmd("pip", "pip", "Small floating video over full-screen chat", "local", () => setLayout("pip"));
+-  cmd("dock", "dock", "Return to your previous layout", "local", () => setLayout("dock"));
+-  cmd("split", "split", "Reset to the default split layout", "local", () => setLayout("split"));
+-  cmd("layout.set", "layout.set <name>", "split, theater, pip or dock", "local", (a) => setLayout(a[0]));
++  // layoutAction validates the requested mode and verifies the resulting S.mode.
++  // dock can restore a saved layout as custom, matching setMode's existing behavior.
++  // [full implementation in source]
+@@
+-  cmd("win.max", "", "Maximize or restore the active window", "local", () => snapTo(S.focus, "max"));
+-  cmd("win.snap", "", "Snap the active window (l r tl tr bl br max)", "local", (a) => snapTo(S.focus, a[0]));
+-  cmd("win.restore", "", "Restore the active window's previous size", "local", () => restoreWin(S.focus));
++  // Geometry commands now validate focus/visibility/desktop support and inspect
++  // the resulting window rectangle/snap state before reporting success.
++  // [full implementation in source]
+@@
+-  cmd("max", "max", "Maximize or restore the focused window", "local", () => snapTo(S.focus, "max"));
++  cmd("max", "max", "Maximize or restore the focused window", "local", () => geometryAction(S.focus, "max"));
+@@
+-    snapTo(S.focus, t);
++    return geometryAction(S.focus, t);
+   });
++  cmd("restore", "restore", "Restore the focused window's previous size", "local", () => restoreGeometry());
