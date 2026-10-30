@@ -1414,7 +1414,7 @@ body.cyos #chatwrap #messagebuffer .cyos-sys{font-style:italic;opacity:.8;border
         : "Window action requested, but the resulting state could not be verified.");
   }
 
-  cmd("help", "help", "Open the Help window", "local", () => windowToggleAction("help", true));
+  cmd("help", "help", "Open the Help window", "local", () => showHelp());
   cmd("chat", "chat", "Open and focus chat", "local", () => windowToggleAction("chat", true));
   cmd("video", "video", "Show or hide the video window", "local", () => windowToggleAction("video"));
   cmd(["list", "pl", "playlist"], "list", "Show or hide the playlist window", "local", () => windowToggleAction("playlist"));
