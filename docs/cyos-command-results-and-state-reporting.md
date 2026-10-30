@@ -49,6 +49,14 @@ The dispatcher gained an opt-in structured Action Result. `focus <window>` valid
 - Mobile does not support closing/hiding windows; `hide` reports that limitation as a failure instead of claiming success when nothing changed.
 - Both commands use the shared Action Result reporter.
 
+### v0.5.51 — layout and geometry
+
+- `theater`, `pip`, `dock`, `split`, and `layout.set` validate the requested layout and inspect the resulting mode before reporting success.
+- `snap`, `max`, and the internal `win.snap`/`win.max` actions verify that the focused window's geometry changed.
+- `restore` and `win.restore` verify that the focused window returned to its normal, unsnapped geometry.
+- Geometry operations reject mobile use, missing focus, hidden windows, and invalid snap targets instead of reporting a success for a no-op.
+- The result messages refer to the user's window and layout, not internal rectangle fields.
+
 ## Migration strategy
 
 Migrate incrementally:
