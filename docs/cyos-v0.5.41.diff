@@ -1,0 +1,14 @@
+diff --git a/cytube-os-v0.5.40.js b/cytube-os-v0.5.41.js
+--- a/cytube-os-v0.5.40.js
++++ b/cytube-os-v0.5.41.js
+@@ titlebar
+-  Minimize button
++  removed; Close and Maximize/Restore remain
+@@ desktop dock
+-  minimized-window chips, dock renderer and styles
++  removed
+@@ menus / commands / keyboard / help
+-  Minimize menu entries, min/win.min commands, '-' shortcut
++  removed
+@@ compatibility
++  CyOS.minWin helper and internal minimized state retained for existing integrations
