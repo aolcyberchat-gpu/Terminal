@@ -1504,9 +1504,10 @@ body.cyos #chatwrap #messagebuffer .cyos-sys{font-style:italic;opacity:.8;border
       return actionResult("failure", "layout", n || null, "Choose split, theater, pip, or dock.");
     }
     const before = S.mode;
+    const restoresSavedLayout = n === "dock" && ["theater", "pip"].includes(before) && !!S.saved;
     setLayout(n);
     const expected = n === "dock"
-      ? (["theater", "pip"].includes(before) && S.saved === null ? "custom" : "split")
+      ? (restoresSavedLayout ? "custom" : "split")
       : ((n === "theater" || n === "pip") && before === n ? "split" : n);
     const verified = S.mode === expected;
     const label = n === "dock" ? "Dock" : n.charAt(0).toUpperCase() + n.slice(1);
