@@ -1,0 +1,15 @@
+diff --git a/cytube-os-v0.5.42.js b/cytube-os-v0.5.43.js
+--- a/cytube-os-v0.5.42.js
++++ b/cytube-os-v0.5.43.js
+@@ dynamic titlebar
+-  bar.innerHTML interpolated title into markup
++  DOM-created buttons and title span using textContent
+@@ desktop icon
+-  innerHTML interpolated icon/title; querySelector interpolated id
++  DOM-created glyph/label; dataset comparison
+@@ window menus
+-  dynamic metadata interpolated into menu HTML
++  HTML-escape labels, actions, arguments, shortcuts and attributes
+@@ menu lookup
+-  querySelector("#" + ariaControls)
++  compare dropdown element IDs directly
