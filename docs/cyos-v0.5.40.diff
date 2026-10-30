@@ -1,0 +1,17 @@
+diff --git a/cytube-os-v0.5.39.js b/cytube-os-v0.5.40.js
+--- a/cytube-os-v0.5.39.js
++++ b/cytube-os-v0.5.40.js
+@@ closeWin
+-    if (S.focus === n) S.focus = topVisible() || "chat";
++    if (S.focus === n) S.focus = topVisible() || "";
+@@
+-    if (S.focus !== n) focusSurface(S.focus);
++    if (S.focus) focusSurface(S.focus);
++    else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+@@ minWin
+-    if (S.focus === n) S.focus = topVisible() || n;
++    if (S.focus === n) S.focus = topVisible() || "";
+@@
+-    if (S.focus !== n) focusSurface(S.focus);
++    if (S.focus) focusSurface(S.focus);
++    else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
