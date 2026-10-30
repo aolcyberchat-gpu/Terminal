@@ -1,0 +1,9 @@
+diff --git a/cytube-os-v0.5.37.js b/cytube-os-v0.5.38.js
+--- a/cytube-os-v0.5.37.js
++++ b/cytube-os-v0.5.38.js
+@@ setMode fullscreen snapshot
+-    if (fs.includes(m) && !inFs) S.saved = clone({ r: S.rects, o: S.open, m: S.min });
++    if (fs.includes(m) && !inFs) S.saved = clone({ r: S.rects });
+@@ setMode restore
+-      S.rects = S.saved.r; S.open = S.saved.o; S.min = S.saved.m || {}; S.saved = null; m = "custom";
++      S.rects = S.saved.r; S.saved = null; m = "custom";
