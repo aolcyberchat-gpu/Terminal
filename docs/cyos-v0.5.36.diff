@@ -1,0 +1,144 @@
+--- a/cytube-os-v0.5.35.js
++++ b/cytube-os-v0.5.36.js
+@@ -1,5 +1,5 @@
+ /* ============================================================
++   CyTube OS - v0.5.36
+-   CyTube OS - v0.5.35
+    Retro grayscale desktop + keyboard-first window manager.
+    Skins CyTube's own chat / video / playlist elements (nothing is
+    rebuilt, so emotes, formatting and slash commands keep working).
+@@ -34,11 +34,12 @@
+             longer overlap on narrow screens; registered windows get a mobile tab; stray "[object
+             HTMLDivElement]" text removed from the menu root
+    v0.5.35: Focused native buttons are excluded from CyOS desk shortcuts so Enter/Space can activate them.
++   v0.5.36: Window lifecycle is independent of layout; launchers persist in theater; focus follows windows.
+    ============================================================ */
+ (() => {
+   "use strict";
+ 
++  const VERSION = "0.5.36";
+-  const VERSION = "0.5.35";
+   if (window.__cyos || /[?&]plain\b/.test(location.search)) return;
+   window.__cyos = true;
+ 
+@@ -233,7 +234,6 @@
+   border:2px solid var(--fg);box-shadow:2px 2px 0 var(--fg);font-size:18px}
+ .cyos-ico span{background:var(--bg);padding:0 3px}
+ .cyos-ico:hover b,.cyos-ico:focus-visible b{background:var(--fg);color:var(--bg)}
+-body.cyos-theater .cyos-icons{display:none}
+ .cyos-tabs{position:absolute;left:0;right:0;bottom:0;height:${TAB}px;display:none;background:var(--bg);border-top:2px solid var(--fg)}
+ .cyos-tabs button{all:unset;flex:1;display:grid;place-items:center;font-weight:700;cursor:pointer}
+ .cyos-tabs button+button{border-left:2px solid var(--fg)}
+@@ -615,17 +615,8 @@
+ 
+   function layout(m) {
+     const W = innerWidth - ICON - 8, H = innerHeight - MB, R = S.rects;
++    // Layout changes geometry only. Window open/minimized state belongs to the
++    // window manager and must survive every layout transition unchanged.
+-    // Preserve open state of built-ins we care about, and any registered windows
+-    const prevOpen = Object.assign({}, S.open);
+-    const keepConsole = !!prevOpen.console, keepHelp = !!prevOpen.help, keepTerm = !!prevOpen.terminal;
+-    S.open = { chat: true, video: true, playlist: true, console: keepConsole, terminal: keepTerm, help: keepHelp };
+-    // Re-attach any registered (non-core) windows that were open
+-    DEFS.forEach((d) => {
+-      const id = defId(d);
+-      if (["chat","video","playlist","console","terminal","help"].indexOf(id) >= 0) return;
+-      if (prevOpen[id]) S.open[id] = true;
+-    });
+-    S.min = {};
+     R.console = { x: G, y: MB + H - 200 - G, w: Math.min(620, W - 2 * G), h: 200 };
+     R.terminal = { x: Math.max(G, W - 520 - G), y: MB + H - 280 - G, w: Math.min(520, W - 2 * G), h: 260 };
+     R.help = { x: Math.max(G, Math.round((innerWidth - 560) / 2)), y: MB + 40, w: Math.min(560, innerWidth - 2 * G), h: Math.max(160, Math.min(540, H - 60)) };
+@@ -660,7 +651,7 @@
+       layout(m === "custom" ? "split" : m);
+     }
+     S.mode = m;
++    refresh();
+-    focusWin("chat");
+     save();
+   }
+ 
+@@ -799,6 +790,12 @@
+     renderDock();
+   }
+ 
++  function focusSurface(n) {
++    const w = WIN[n];
++    if (!w || mobile()) return;
++    try { w.el.focus({ preventScroll: true }); } catch (_) { try { w.el.focus(); } catch (_) {} }
++  }
++
+   function focusWin(n) {
+     if (!WIN[n]) return;
+     if (mobile()) S.tab = n; else { S.open[n] = true; S.min[n] = false; }
+@@ -806,8 +803,12 @@
+     raiseWin(n);
+     refresh();
+     rebuildWindowMenus();
++    if (!mobile()) {
++      if (n === "terminal" && ui.termInput) {
++        setTimeout(() => { try { ui.termInput.focus({ preventScroll: true }); } catch (_) {} }, 0);
++      } else {
++        focusSurface(n);
++      }
+-    if (n === "terminal" && ui.termInput && !mobile()) {
+-      setTimeout(() => { try { ui.termInput.focus({ preventScroll: true }); } catch (_) {} }, 0);
+     }
+   }
+ 
+@@ -824,6 +825,7 @@
+     if (S.focus === n) S.focus = topVisible() || "chat";
+     refresh();
+     rebuildWindowMenus();
++    if (S.focus !== n) focusSurface(S.focus);
+     save();
+   }
+ 
+@@ -835,6 +837,7 @@
+     if (S.focus === n) S.focus = topVisible() || n;
+     refresh();
+     rebuildWindowMenus();
++    if (S.focus !== n) focusSurface(S.focus);
+     save();
+     note((defTitle(DEFS.find((d) => defId(d) === n) || {title:n})) + " minimized. Click its chip (bottom left) or press its key to restore.");
+   }
+@@ -1018,6 +1021,7 @@
+     el.insertBefore(bar, el.firstChild);
+     el.appendChild(grow);
+     el.classList.add("cyos-win");
++    el.tabIndex = -1;
+     el.style.zIndex = String(++S.z);
+     WIN[name] = { name, el, bar, grow, title, icon, mount };
+ 
+@@ -1267,7 +1271,7 @@
+   }
+ 
+   function buildRoot() {
++    const iconTips = {chat:'Open or focus Chat (C)',video:'Open or focus Video (V)',playlist:'Open or focus Playlist (P)',console:'Open or focus Console (O)',terminal:'Open or focus Terminal (Y)',help:'Open or focus Help (H or ?)'};
+-    const iconTips = {chat:'Open and focus Chat (C)',video:'Toggle Video window (V)',playlist:'Toggle Playlist window (P)',console:'Toggle Console window (O)',terminal:'Toggle Terminal window (Y)',help:'Toggle Help window (H or ?)'};
+     const iconKeys = {chat:'C',video:'V',list:'P',console:'O',terminal:'Y',help:'H'};
+     const iconsHtml =
+       '<div class="cyos-icons">' +
+@@ -2603,7 +2607,21 @@
+ 
+     document.addEventListener("keydown", onKey, true);
+     document.addEventListener("focusin", (e) => {
++      const target = e.target;
++      const win = target && target.closest ? target.closest(".cyos-win") : null;
++      if (win) {
++        const entry = Object.keys(WIN).find((id) => WIN[id].el === win);
++        if (entry && S.focus !== entry) {
++          S.focus = entry;
++          raiseWin(entry);
++          refresh();
++          rebuildWindowMenus();
++        }
++      }
++      if (S.desk && target && target.matches &&
++          target.matches("input,textarea,select,[contenteditable='true']")) {
++        S.desk = false; S.move = false; flag();
++      }
+-      if (S.desk && e.target && e.target.matches && e.target.matches("input,textarea")) { S.desk = false; S.move = false; flag(); }
+     });
+     if (!hookSocket()) { let n = 0; const t = setInterval(() => { if (hookSocket() || ++n > 40) clearInterval(t); }, 500); }
+ 
