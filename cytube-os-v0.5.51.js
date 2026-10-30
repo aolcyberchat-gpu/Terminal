@@ -1505,8 +1505,9 @@ body.cyos #chatwrap #messagebuffer .cyos-sys{font-style:italic;opacity:.8;border
     }
     const before = S.mode;
     setLayout(n);
-    const expected = n === "dock" ? "split" :
-      ((n === "theater" || n === "pip") && before === n ? "split" : n);
+    const expected = n === "dock"
+      ? (["theater", "pip"].includes(before) && S.saved === null ? "custom" : "split")
+      : ((n === "theater" || n === "pip") && before === n ? "split" : n);
     const verified = S.mode === expected;
     const label = n === "dock" ? "Dock" : n.charAt(0).toUpperCase() + n.slice(1);
     return actionResult(verified ? "success" : "unknown", "layout", n,
