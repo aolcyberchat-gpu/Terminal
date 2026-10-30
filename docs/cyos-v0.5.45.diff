@@ -1,0 +1,9 @@
+diff --git a/cytube-os-v0.5.44.js b/cytube-os-v0.5.45.js
+--- a/cytube-os-v0.5.44.js
++++ b/cytube-os-v0.5.45.js
+@@ statusLine()
+-      ui.termStatus.innerHTML = "<b>v" + VERSION + "</b> · " + (S.focus || "?") + " · " + S.mode + " · " + pl + " · " + openN + " win";
++      ui.termStatus.textContent = "v" + VERSION + " · " + (S.focus || "?") + " · " + S.mode + " · " + pl + " · " + openN + " win";
+@@ Terminal startup hint
+-    Density: status strip above · flag = mode·focus·lock·hints.
++    Status strip above shows version, focus, layout, playlist lock and open-window count.
