@@ -47,21 +47,29 @@ The dispatcher gained an opt-in structured Action Result. `focus <window>` valid
 - `show <window>` and `open <window>` validate the target, perform the open/focus operation, then verify desktop visibility or the active mobile tab.
 - `hide <window>` validates the target, performs the close operation on desktop, and verifies it is no longer open or minimized.
 - Mobile does not support closing/hiding windows; `hide` reports that limitation as a failure instead of claiming success when nothing changed.
-- Both commands use the shared Action Result reporter.
 
 ### v0.5.51 — layout and geometry
 
 - `theater`, `pip`, `dock`, `split`, and `layout.set` validate the requested layout and inspect the resulting mode before reporting success.
 - `snap`, `max`, and the internal `win.snap`/`win.max` actions verify that the focused window's geometry changed.
 - `restore` and `win.restore` verify that the focused window returned to its normal, unsnapped geometry.
-- Geometry operations reject mobile use, missing focus, hidden windows, and invalid snap targets instead of reporting a success for a no-op.
-- The result messages refer to the user's window and layout, not internal rectangle fields.
+- Geometry operations reject mobile use, missing focus, hidden windows, and invalid snap targets.
+
+### v0.5.52 — local window controls and preferences
+
+- Common window commands (`chat`, `video`, `list`, `console`, and `terminal`) now use a shared action that verifies whether the window opened, closed, or became the active mobile tab.
+- `top [window]` verifies the always-on-top setting after applying it.
+- `menumode focus|open` validates and verifies the selected menu-bar mode.
+- `users`, `nav`, and `sysmsg [on|off]` verify their resulting local settings.
+- `theme [mac|term]` validates the requested theme and checks both stored state and the applied body class.
+- The dedicated Help command retains its existing `showHelp()` behavior and is not included in this migration.
+- Unrelated display/reporting commands and CyTube server actions remain on their existing paths.
 
 ## Migration strategy
 
 Migrate incrementally:
-1. Local window actions (focus, show/open, hide).
-2. Geometry, layout, alpha and other local state changes.
+1. Local window actions.
+2. Geometry, layout, alpha and local preferences.
 3. Playlist and chat actions, distinguishing pending from confirmed outcomes.
 4. Consistent reporting across Terminal, palette and other entry points.
 
