@@ -1,0 +1,9 @@
+diff --git a/cytube-os-v0.5.38.js b/cytube-os-v0.5.39.js
+--- a/cytube-os-v0.5.38.js
++++ b/cytube-os-v0.5.39.js
+@@ focusWin Terminal deferred focus
+-        setTimeout(() => { try { ui.termInput.focus({ preventScroll: true }); } catch (_) {} }, 0);
++        setTimeout(() => {
++          if (S.focus !== n || !S.open[n] || S.min[n]) return;
++          try { ui.termInput.focus({ preventScroll: true }); } catch (_) {}
++        }, 0);
