@@ -1,0 +1,10 @@
+diff --git a/cytube-os-v0.5.41.js b/cytube-os-v0.5.42.js
+--- a/cytube-os-v0.5.41.js
++++ b/cytube-os-v0.5.42.js
+@@ cycle(dir)
+-    focusWin(names[(i + dir + names.length) % names.length]);
++    const next = i < 0 ? (dir > 0 ? 0 : names.length - 1) : (i + dir + names.length) % names.length;
++    focusWin(names[next]);
+@@ minWin notification
+-    note(... + " minimized. Click its chip (bottom left) or press its key to restore.");
++    note(... + " minimized. Click its desktop icon or use its window shortcut to restore.");
