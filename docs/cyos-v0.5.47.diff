@@ -1,0 +1,70 @@
+--- a/cytube-os-v0.5.46.js
++++ b/cytube-os-v0.5.47.js
+@@
+-   v0.5.46: Fail closed when CyTube chat handler is unavailable; never bypass it with raw socket emit.
++   v0.5.46: Fail closed when CyTube chat handler is unavailable; never bypass it with raw socket emit.
++   v0.5.47: Report configured alpha separately from layout-effective Chat surfaces (Theater buffer/input override).
+@@
+-  const VERSION = "0.5.46";
++  const VERSION = "0.5.47";
+@@
+   function getAlpha(id) {
+     const a = S.alphas[id];
+     return typeof a === "number" ? clampAlpha(a) : 1;
+   }
++
++  // Report the CSS background opacity selected for each surface.
++  // Theater applies a 76% multiplier only to Chat's buffer and input.
++  function alphaState(id) {
++    const configured = getAlpha(id);
++    const theaterChat = id === "chat" && S.mode === "theater";
++    return {
++      configured,
++      frame: configured,
++      content: theaterChat ? configured * 0.76 : configured,
++      userlist: configured,
++      theaterOverride: theaterChat
++    };
++  }
++
++  function alphaReport(id) {
++    const st = alphaState(id), pct = (v) => Math.round(v * 100) + "%";
++    if (id === "chat") {
++      return "configured " + pct(st.configured) +
++        " | frame/title " + pct(st.frame) +
++        " | buffer/input " + pct(st.content) +
++        (st.theaterOverride ? " (theater ×76%)" : "") +
++        (S.users ? " | userlist " + pct(st.userlist) : "");
++    }
++    return "configured/effective " + pct(st.configured);
++  }
+@@
+-      const a = Math.round(getAlpha(id) * 100) + "%";
+-      const line = id.padEnd(12) + st.padEnd(8) + a.padEnd(5) + defTitle(d);
++      const a = id === "chat" ? alphaReport(id) : Math.round(getAlpha(id) * 100) + "%";
++      const line = id.padEnd(12) + st.padEnd(8) + a + (id === "chat" ? "" : "  " + defTitle(d));
+@@
+-    const report = (id) => Math.round(getAlpha(id) * 100) + "%";
+-    // bare "alpha" lists all window alphas (one form only; no alpha list / alpha ls)
++    const report = (id) => alphaReport(id);
++    // Bare alpha reports configured values plus effective Chat surfaces.
+@@
+-      const ids = DEFS.map(defId);
+-      ids.forEach((id) => termOut("ok", id.padEnd(12) + report(id)));
+-      note("alpha <window|all|focus> on|off|0|0.7|70  — focused: " + (S.focus || "?") + " " + report(S.focus));
++      DEFS.forEach((d) => {
++        const id = defId(d);
++        termOut("ok", id.padEnd(12) + report(id));
++      });
++      note("alpha <window|all|focus> on|off|0|0.7|70 — configured values; effective surfaces shown above.");
+@@
+-      note((ids[0] || "?") + " alpha " + report(ids[0] || S.focus));
++      note((ids[0] || "?") + " alpha: " + report(ids[0] || S.focus));
+@@
+-    if (ids.length === 1) note(ids[0] + " alpha " + report(ids[0]));
+-    else note(ids.length + " windows → alpha set");
++    if (ids.length === 1) note(ids[0] + " alpha: " + report(ids[0]));
++    else {
++      ids.forEach((id) => termOut("ok", id.padEnd(12) + report(id)));
++      note(ids.length + " windows updated; configured and effective values shown.");
++    }
