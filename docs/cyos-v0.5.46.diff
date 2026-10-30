@@ -1,0 +1,9 @@
+diff --git a/cytube-os-v0.5.45.js b/cytube-os-v0.5.46.js
+--- a/cytube-os-v0.5.45.js
++++ b/cytube-os-v0.5.46.js
+@@ sendChat(text)
+-  else emit("chatMsg", { msg: text, meta: {} });
++  if CyTube chat input / jQuery event API is unavailable:
++    report not sent and return false
++  trigger CyTube's native keydown handler
++  restore the user's existing chat draft in finally
