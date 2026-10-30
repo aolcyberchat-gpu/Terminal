@@ -1,0 +1,13 @@
+diff --git a/cytube-os-v0.5.43.js b/cytube-os-v0.5.44.js
+--- a/cytube-os-v0.5.43.js
++++ b/cytube-os-v0.5.44.js
+@@ command palette Enter
+         run(v);
+-        exitDesk();
++        // Do not refocus CyTube chatline after a command opens another window.
+@@ menu bar
+-  <span class="cyos-flag">Chat</span>
++  [status flag removed]
+@@ status rendering
+-  statusHints(), statusText(), ui.flag updates and .cyos-flag CSS
++  removed; temporary note and clock retained
