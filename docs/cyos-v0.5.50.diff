@@ -1,0 +1,29 @@
+--- a/cytube-os-v0.5.49.js
++++ b/cytube-os-v0.5.50.js
+@@
+-  const VERSION = "0.5.49";
++  const VERSION = "0.5.50";
+@@
+-  cmd("hide", "hide <window>", "Close (hide) a window", "local", (a) => {
++  cmd("hide", "hide <window>", "Close (hide) a window", "local", (a) => {
+     const n = (a[0] || "").toLowerCase();
+-    if (!WIN[n]) return note("Windows: " + DEFS.map(defId).join(", "), "err");
++    if (!n || !WIN[n]) return actionResult("failure", "hide", n || null, "Unknown window. Available: " + DEFS.map(defId).join(", "));
++    if (mobile()) return actionResult("failure", "hide", n, "Windows remain available as mobile tabs; switch tabs instead of hiding them.");
+     closeWin(n);
+-    note("Hid " + n);
++    const verified = !S.open[n] && !S.min[n];
++    return actionResult(verified ? "success" : "unknown", "hide", n,
++      verified ? "Hid " + n + "." : "Hide requested for " + n + ", but CyOS could not verify that the window closed.");
+   });
+-  cmd("show", "show <window>", "Open a window without stealing focus logic", "local", (a) => {
++  cmd(["show", "open"], "show <window>", "Open a window", "local", (a) => {
+     const n = (a[0] || "").toLowerCase();
+-    if (!WIN[n]) return note("Windows: " + DEFS.map(defId).join(", "), "err");
++    if (!n || !WIN[n]) return actionResult("failure", "show", n || null, "Unknown window. Available: " + DEFS.map(defId).join(", "));
+     openWin(n);
+-    note("Showed " + n);
++    const verified = mobile() ? S.tab === n && S.focus === n : !!S.open[n] && !S.min[n];
++    return actionResult(verified ? "success" : "unknown", "show", n,
++      verified ? "Opened " + n + "." : "Open requested for " + n + ", but CyOS could not verify that the window is visible.");
+   });
