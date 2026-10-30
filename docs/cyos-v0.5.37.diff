@@ -1,0 +1,12 @@
+diff --git a/cytube-os-v0.5.36.js b/cytube-os-v0.5.37.js
+--- a/cytube-os-v0.5.36.js
++++ b/cytube-os-v0.5.37.js
+@@
+-const VERSION = "0.5.36";
++const VERSION = "0.5.37";
+@@ layout(m)
+-      S.open.playlist = false;
++      // Playlist visibility is controlled by the window manager, not by layout geometry.
+@@ layout(m)
+-      S.open.playlist = false;
++      // Playlist visibility is controlled by the window manager, not by layout geometry.
