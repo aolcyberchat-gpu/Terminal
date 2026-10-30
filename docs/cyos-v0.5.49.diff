@@ -1,0 +1,39 @@
+--- a/cytube-os-v0.5.48.js
++++ b/cytube-os-v0.5.49.js
+@@
+-  const VERSION = "0.5.48";
++  const VERSION = "0.5.49";
+@@
+   cmd("focus", "focus <window>", "Open and focus a window (chat, video, playlist, …)", "local", (a) => {
+     const n = (a[0] || "").toLowerCase();
+-    if (!n || !WIN[n]) return note("Windows: " + DEFS.map(defId).join(", "), "err");
++    if (!n || !WIN[n]) {
++      return actionResult("failure", "focus", n || null, "Unknown window. Available: " + DEFS.map(defId).join(", "));
++    }
+     openWin(n);
+-    note("Focused " + n);
++    const verified = S.focus === n && (mobile() ? S.tab === n : !!S.open[n] && !S.min[n]);
++    return actionResult(
++      verified ? "success" : "unknown",
++      "focus",
++      n,
++      verified ? "Focused " + n + "." : "Focus requested for " + n + ", but CyOS could not verify the resulting focus state."
++    );
+   });
+@@
+-  function dispatch(name, args, raw, echo, display) {
++  function actionResult(status, action, target, message, details) {
++    return { __cyosActionResult: true, status, action, target, message, details };
++  }
++  function reportActionResult(result) {
++    if (!result || result.__cyosActionResult !== true) return false;
++    note(result.message || (result.status + ": " + result.action), result.status === "success" ? "ok" : "err");
++    return true;
++  }
++  function dispatch(name, args, raw, echo, display) {
+@@
+-    c.fn(args || [], raw || "");
++    const result = c.fn(args || [], raw || "");
++    if (reportActionResult(result)) return result;
+     return true;
+   }
