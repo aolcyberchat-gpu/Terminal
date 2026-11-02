@@ -1,0 +1,11 @@
+{
+  "title": "Example 24/7 Channel",
+  "loop": true,
+  "start": "2026-11-01T00:00:00Z",
+  "entries": [
+    { "id": "show1", "title": "Example Show", "kind": "show", "src": "yt:REPLACE_ME_1", "dur": 1500 },
+    { "id": "ad1", "title": "Example Ad", "kind": "ad", "src": "yt:REPLACE_ME_2", "dur": 60 },
+    { "id": "show2", "title": "Example Movie", "kind": "show", "src": "yt:REPLACE_ME_3", "dur": 5400 },
+    { "id": "ad2", "title": "Another Ad", "kind": "ad", "src": "yt:REPLACE_ME_4", "dur": 90 }
+  ]
+}
